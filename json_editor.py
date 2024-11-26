@@ -31,6 +31,13 @@ def open_editor(root, fileName=None):
             load_file(file_path)
         else:
             error_label.config(text=f"Error: File '{fileName}' does not exist!", fg="red")
+    else:
+        target_folder = os.path.join(os.getcwd(), "json_files")
+        file_path = os.path.join(target_folder, "template.json")
+        if os.path.exists(file_path):
+            load_file(file_path)
+        else:
+            error_label.config(text=f"Error: File '{fileName}' does not exist!", fg="red")
 
     
     def open_file():
@@ -69,6 +76,7 @@ def open_editor(root, fileName=None):
         if (fileName is not None):
             # Parse the text content to ensure it's valid JSON
             content = json.loads(text_editor.get(1.0, END))
+
             # Save the file
             with open(target_folder + "/" + fileName, "w") as file:
                 json.dump(content, file, indent=4)
@@ -94,6 +102,16 @@ def open_editor(root, fileName=None):
                 # Handle invalid JSON
                 error_label.config(text="Error: Invalid JSON format!", fg="red")
 
+    def remove_file():
+            # Define the target folder within the project directory
+            target_folder = os.path.join(os.getcwd(), "json_files")
+            
+            # Ensure the folder exists
+            os.makedirs(target_folder, exist_ok=True)
+
+            if (fileName is not None):
+                file_path = os.path.join(target_folder, fileName)
+                os.remove(file_path)
 
     # Buttons for file operations
     button_frame = Frame(editor_window)
@@ -104,6 +122,9 @@ def open_editor(root, fileName=None):
     
     save_button = Button(button_frame, text="Save JSON File", command=save_file)
     save_button.pack(side="left", padx=5)
+
+    remove_button = Button(button_frame, text="Remove JSON File", command=remove_file)
+    remove_button.pack(side="left", padx=5)
     
     # Error label for displaying JSON errors
     error_label = Label(editor_window, text="", fg="red")

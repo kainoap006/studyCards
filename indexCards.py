@@ -21,10 +21,18 @@ def makeList():
 
     return matching_files
 
+def refresh_listbox():
+    # Clear the existing content in the Listbox
+    mylist.delete(0, END)
+
+    # Re-populate the Listbox with updated JSON files
+    updated_list = makeList()
+    for file_name in updated_list:
+        mylist.insert(END, file_name)
+
 def selected_item():
-    # Traverse the tuple returned by
-    # curselection method and print
-    # corresponding value(s) in the listbox
+    # Traverse the tuple returned by curselection method
+    # and return corresponding value(s) in the listbox
     for i in mylist.curselection():
         return mylist.get(i)
     return 
@@ -34,11 +42,13 @@ root.title("Index Cards")
 
 # Create three buttons
 buttonQuizMe = Button(root, text="Quiz me (Select one)", command=lambda: display_json_content(root, selected_item()))
-buttonNewStudyCards = Button(root, text="Create/Edit new study cards", command=lambda: open_editor(root, selected_item()))
+buttonNewStudyCards = Button(root, text="Create/Edit new study cards", command=lambda: [open_editor(root, selected_item()), refresh_listbox()])
+buttonRefresh = Button(root, text="Refresh List", command=refresh_listbox)
 
 # Pack the buttons vertically
 buttonQuizMe.pack(pady=5)
 buttonNewStudyCards.pack(pady=5)
+buttonRefresh.pack(pady=5)
 
 # Create a frame to hold the Listbox and Scrollbar
 frame = Frame(root)
@@ -54,10 +64,7 @@ mylist.pack(side=LEFT, fill=BOTH, expand=True)
 # Configure the Scrollbar to work with the Listbox
 scrollbar.config(command=mylist.yview)
 
-listOfJSONFiles = makeList()
-
-# Add items to the Listbox
-for line in range(len(listOfJSONFiles)):
-    mylist.insert(END, listOfJSONFiles[line])
+# Initial population of the Listbox
+refresh_listbox()
 
 mainloop()
